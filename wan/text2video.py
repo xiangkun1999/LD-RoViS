@@ -634,7 +634,29 @@ class WanT2V:
             x_prime = x_prime[0]
 
  
-        my_video, _, _ = io.read_video('video_cover/test.mp4', pts_unit='pts')
+        test_video = self.vae.decode([latent_x1])
+
+
+
+
+        current_time = datetime.datetime.now()
+        time_str = current_time.strftime("%m_%d_%H_%M")
+        #name the video by input_prompt
+        first_word = input_prompt.split()[0] if input_prompt else ""
+                    
+        video_file_name = f'video_cover/{first_word}_{time_str}.mp4'
+
+        cache_video(
+            tensor=test_video[0][None],
+            save_file=video_file_name,
+            fps=16,
+            nrow=1,
+            ormalize=True,
+            value_range=(-1, 1))
+
+                    
+
+        my_video, _, _ = io.read_video(video_file_name, pts_unit='pts')
 
         my_video = my_video.permute(3, 0, 1, 2).unsqueeze(0).to(self.device).float()
         my_video = (my_video / 127.5) - 1  # (-1, 1)
