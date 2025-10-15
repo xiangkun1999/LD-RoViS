@@ -70,7 +70,18 @@ python PSNR.py
 (3) If you want to evaluate the BRISQUE of the stego videos, you can refer to [BRISQUE](https://github.com/krshrimali/No-Reference-Image-Quality-Assessment-using-BRISQUE-Model).
 
 
-(4) If you want to evaluate the robustness of LD-RoViS, you can You can uncomment ./wan/text2video.py.
+(4) If you want to evaluate the robustness of LD-RoViS, you can uncomment ./wan/text2video.py.
+
+## Citation
+If you find this work useful, please consider citing:
+```
+@inproceedings{LD-RoViS2025,
+  title     = {LD-RoViS: Training-free Robust Video Steganography for Deterministic Latent Diffusion Model},
+  author    = {Xiangkun Wang and Kejiang Chen and Lincong Li and Weiming Zhang and Nenghai Yu},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2025}
+}
+```
 
 ## Acknowledgments
 We thank the following open-source projects for their contributions: [wan](https://github.com/Wan-Video/Wan2.1).
