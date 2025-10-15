@@ -77,8 +77,8 @@ If you find this work useful, please consider citing:
 ```
 @inproceedings{LD-RoViS2025,
   title     = {LD-RoViS: Training-free Robust Video Steganography for Deterministic Latent Diffusion Model},
-  author    = {Xiangkun Wang and Kejiang Chen and Lincong Li and Weiming Zhang and Nenghai Yu},
-  booktitle = {Advances in Neural Information Processing Systems},
+  author    = {Wang, Xiangkun and Chen, Kejiang and Li, Lincong and Zhang, Weiming and Yu, Nenghai},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
   year      = {2025}
 }
 ```
