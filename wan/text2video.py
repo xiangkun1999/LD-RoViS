@@ -32,21 +32,46 @@ import datetime
 
 
 def add_gaussian_noise(img, std=0.05):
-    noise = np.random.normal(0, std * 127, img.shape).astype(np.int16)
+    noise = np.random.normal(0, std, img.shape).astype(np.int16)
     noisy_img = np.clip(img.astype(np.int16) + noise, 0, 255).astype(np.uint8)
     return noisy_img
 
-def add_pepper_salt_noise(img, prob=0.01):
-    output = np.copy(img)
-    probs = np.random.rand(*img.shape[:2])
-    output[probs < (prob / 2)] = 0      # pepper
-    output[probs > 1 - (prob / 2)] = 255  # salt
-    return output
+def apply_image_level_sp(frame, pepper, salt):
+    out = frame.astype(np.float32)
+
+    out[pepper][:,0] = 0   
+    out[salt][:,0]   = 255    
+
+    return out.astype(np.uint8)
 
 def adjust_brightness(img, delta=0.1):
     hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV).astype(np.float32)
     hsv[..., 2] = np.clip(hsv[..., 2] * (1 + delta), 0, 255)
     return cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2RGB)
+
+def apply_crf_compression(
+    input_mp4: str,
+    crf: int = 18,
+    preset: str = "fast",
+    output_suffix: str = "_crf",
+):
+    assert input_mp4.endswith(".mp4")
+
+    base, ext = os.path.splitext(input_mp4)
+    output_mp4 = f"{base}{output_suffix}{crf}{ext}"
+
+    cmd = [
+        "ffmpeg",
+        "-y",                     
+        "-i", input_mp4,          
+        "-c:v", "libx264",        
+        "-crf", str(crf),         
+        "-preset", preset,       
+        output_mp4,
+    ]
+
+    subprocess.run(cmd, check=True)
+    return output_mp4
 
 
 
@@ -317,25 +342,22 @@ class WanT2V:
                         normalize=True,
                         value_range=(-1, 1))
 
-                    
+                    # #  CRF （mp4 -> mp4）
+                    # video_file_name_crf = apply_crf_compression(
+                    #     video_file_name,
+                    #     crf=18,          
+                    #     preset="fast",   
+                    # )
+
+                    # my_video, _, _ = io.read_video(video_file_name_crf, pts_unit='pts')
+
 
                     my_video, _, _ = io.read_video(video_file_name, pts_unit='pts')
 
-                    # # ======
-                    # my_video = my_video.numpy()  # Tensor -> NumPy
-                    # if my_video.max() <= 1:
-                    #     my_video = (my_video * 255).astype(np.uint8)
+                    
 
-                    # perturbed_frames = []
-                    # for frame in my_video:
-                    #     # frame = add_gaussian_noise(frame, std=0.05)
-                    #     # frame = add_pepper_salt_noise(frame, prob=0.05)
-                    #     # frame = adjust_brightness(frame, delta=0.1)
-                    #     # frame = adjust_contrast(frame, contrast_factor=0.5)
-                    #     perturbed_frames.append(frame)
 
-                    # my_video = torch.from_numpy(np.stack(perturbed_frames))  # back to Tensor
-                    # # ======
+                    
 
 
 
@@ -462,28 +484,62 @@ class WanT2V:
                 sample_solver='unipc', sampling_steps=50, guide_scale=5.0, n_prompt="", seed=-1, offload_model=True, val_mask1=0.32,
                  val_mask2=0.98,
                  add_cfg=16):
+        
+
+        # #  CRF （mp4 -> mp4）
+        # video_file_name_crf = apply_crf_compression(
+        #     video_path,
+        #     crf=18,          
+        #     preset="fast",   
+        # )
+
+        # video, _, _ = io.read_video(video_file_name_crf, pts_unit='pts')
    
         
-        video, _, _ = io.read_video(video_path, pts_unit='pts')
+        my_video, _, _ = io.read_video(video_path, pts_unit='pts')
 
 
+        # # ====== gaussian or brightness
+        # my_video = my_video.numpy()  # Tensor -> NumPy
+        # if my_video.max() <= 1:
+        #     my_video = (my_video * 255).astype(np.uint8)
+
+        # perturbed_frames = []
+        # for frame in my_video:
+        #     # frame = add_gaussian_noise(frame, std=0.05)
+        #     # frame = adjust_brightness(frame, delta=0.1)
+        #     perturbed_frames.append(frame)
+
+        # my_video = torch.from_numpy(np.stack(perturbed_frames))  # back to Tensor
         # # ======
-                    # my_video = my_video.numpy()  # Tensor -> NumPy
-                    # if my_video.max() <= 1:
-                    #     my_video = (my_video * 255).astype(np.uint8)
 
-                    # perturbed_frames = []
-                    # for frame in my_video:
-                    #     # frame = add_gaussian_noise(frame, std=0.05)
-                    #     # frame = add_pepper_salt_noise(frame, prob=0.05)
-                    #     # frame = adjust_brightness(frame, delta=0.1)
-                    #     # frame = adjust_contrast(frame, contrast_factor=0.5)
-                    #     perturbed_frames.append(frame)
 
-                    # my_video = torch.from_numpy(np.stack(perturbed_frames))  # back to Tensor
-                    # # ======
 
-        video = video.permute(3, 0, 1, 2).unsqueeze(0).to(self.device).float()
+        # # # === pepper & salt
+
+        # T, H, W, C = steg_video.shape  # steg_video: [T,H,W,3], uint8
+
+        # prob = 0.01
+        # sp_mask = np.random.rand(H, W)
+        # pepper = sp_mask < (prob / 2)
+        # salt   = sp_mask > 1 - (prob / 2)
+        
+
+        # steg_video = steg_video.numpy()  # Tensor -> NumPy
+        # if steg_video.max() <= 1:
+        #     steg_video = (steg_video * 255).astype(np.uint8)
+
+        # perturbed_frames = []
+        # for t, frame in enumerate(steg_video):
+            
+        #     frame = apply_image_level_sp(frame, pepper, salt)
+            
+        #     perturbed_frames.append(frame)
+
+        # steg_video = torch.from_numpy(np.stack(perturbed_frames))  # back to Tensor
+        # # === 
+
+        video = my_video.permute(3, 0, 1, 2).unsqueeze(0).to(self.device).float()
         video = (video / 127.5) - 1  #(-1, 1)
         
         x_prime = self.vae.encode(video)
@@ -653,6 +709,15 @@ class WanT2V:
                         nrow=1,
                         normalize=True,
                         value_range=(-1, 1))
+        
+        # #  CRF （mp4 -> mp4）
+        # video_file_name_crf = apply_crf_compression(
+        #                 video_file_name,
+        #                 crf=18,          
+        #                 preset="fast",  
+        # )
+
+        # my_video, _, _ = io.read_video(video_file_name_crf, pts_unit='pts')
 
                     
 
