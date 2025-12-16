@@ -321,21 +321,6 @@ class WanT2V:
 
                     my_video, _, _ = io.read_video(video_file_name, pts_unit='pts')
 
-                    # # ======
-                    # my_video = my_video.numpy()  # Tensor -> NumPy
-                    # if my_video.max() <= 1:
-                    #     my_video = (my_video * 255).astype(np.uint8)
-
-                    # perturbed_frames = []
-                    # for frame in my_video:
-                    #     # frame = add_gaussian_noise(frame, std=0.05)
-                    #     # frame = add_pepper_salt_noise(frame, prob=0.05)
-                    #     # frame = adjust_brightness(frame, delta=0.1)
-                    #     # frame = adjust_contrast(frame, contrast_factor=0.5)
-                    #     perturbed_frames.append(frame)
-
-                    # my_video = torch.from_numpy(np.stack(perturbed_frames))  # back to Tensor
-                    # # ======
 
 
 
