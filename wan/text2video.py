@@ -375,11 +375,10 @@ class WanT2V:
 
                     n = mask.sum().item()
 
+                    print(n)
                     # torch.manual_seed(99)
 
                     message = torch.randint(0, 2, (n,),  device=self.device)
-
-                    print(f"隐写容量为{n}比特，消息的前16位是：{message[:16]}")
 
                     # save message
                     save_dir = "message"
