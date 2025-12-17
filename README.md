@@ -73,6 +73,13 @@ python PSNR.py
 
 
 (4) If you want to evaluate the robustness of LD-RoViS, you can uncomment ./wan/text2video.py.
+**Note:** The above robustness evaluation options are **mutually exclusive**.  
+Please enable **only one** type of perturbation at a time to ensure a fair and consistent evaluation.
+- To enable video compression (CRF) testing, uncomment lines **345–352**, **489–496**, and **713–720** in `code/wan/text2video.py`.
+- To enable brightness adjustment or Gaussian noise testing, uncomment lines **502–514**.
+- To enable salt-and-pepper noise testing, uncomment lines **518–540**.
+
+
 
 ## Citation
 If you find this work useful, please consider citing:
