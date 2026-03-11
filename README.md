@@ -84,11 +84,10 @@ Please enable **only one** type of perturbation at a time to ensure a fair and c
 ## Citation
 If you find this work useful, please consider citing:
 ```
-@inproceedings{LD-RoViS2025,
-  title     = {LD-RoViS: Training-free Robust Video Steganography for Deterministic Latent Diffusion Model},
-  author    = {Wang, Xiangkun and Chen, Kejiang and Li, Lincong and Zhang, Weiming and Yu, Nenghai},
-  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
-  year      = {2025}
+@inproceedings{wangld,
+  title={LD-RoViS: Training-free Robust Video Steganography for Deterministic Latent Diffusion Model},
+  author={Wang, Xiangkun and Chen, Kejiang and Li, Lincong and Zhang, Weiming and Yu, Nenghai},
+  booktitle={The Thirty-ninth Annual Conference on Neural Information Processing Systems}
 }
 ```
 
